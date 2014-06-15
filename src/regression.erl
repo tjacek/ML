@@ -10,9 +10,15 @@
 -author("tjacek").
 
 %% API
--export([test_regression/2,parse_labels/1]).
+-export([run_exp/1,test_regression/2,parse_labels/1]).
+
+run_exp(Args) ->
+  TrainFile = lists:nth(1,Args),
+  TestFile = lists:nth(2,Args),
+  test_regression(TrainFile,TestFile).
 
 test_regression(TrainFile,TestFile) ->
+  io:format("OK \n"),
   {Attributes, TrainSet} = mllib:read(arff,[{file,TrainFile}]),
   {Attributes, TestSet} = mllib:read(arff,[{file,TestFile}]),
   {Y_true,X}=parse_labels(TestSet),
