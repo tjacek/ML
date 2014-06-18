@@ -12,7 +12,7 @@ double gradient(Vector * theta,Samples * samples,int j);
 Vector * learn(Samples * s,double alpha,double maxErr){
   Vector * theta=makeVector(s->n);
   int iter=0;
-  int maxIter=10000000;
+  int maxIter=1000;
   double error=maxErr+1.0; 
   do{
     if(iter>maxIter){
@@ -42,6 +42,27 @@ double mse(Vector * theta,Samples * samples){
   double k=(double)samples->k;
   serror=serror/k;
   return sqrt(serror);
+}
+
+double avg_error(Vector * theta,Samples * samples){
+  double error=0.0;
+  for(int i=0;i<samples->k;i++){
+    Sample * s=samples->s[i];
+    double predY=applyRegression(theta,s->x);
+    double diff = predY - s->y;
+    error+= abs(diff);
+  }
+  double k=(double)samples->k;
+  error=error/k;
+  return error;
+}
+
+double normL2(Vector * theta){
+  double norm=0.0;
+  for(int i=0;i<theta->n;i++){
+     norm+=theta->data[i]* theta->data[i];
+  }
+  return norm;
 }
 
 double applyRegression(Vector * theta,Vector * x){

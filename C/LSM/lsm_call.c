@@ -6,7 +6,6 @@
 
 using namespace std;
 
-
 Samples * readFile(char * filename){
   ifstream infile(filename); // for example
   string line = "";
@@ -44,18 +43,32 @@ Samples * readFile(char * filename){
   return samples;
 } 
 
+void saveFile(double error,double serror,Vector * theta,char * filename){
+  FILE *f;
+  f = fopen(filename, "a");
+  fprintf(f, "error: %f\n",error);
+  fprintf(f, "squared error: %f\n", serror);
+  for(int i=0;i<theta->n;i++){
+     fprintf(f, "%f,",theta->data[i]);
+  }
+  fprintf(f, "\n");
+  fclose(f);
+}
+
+void execute(char * trainfile,char * testfile,char * output){
+  Samples *train=readFile(trainfile);
+  Samples * test=readFile(testfile);
+  Vector  * theta=learn(train,0.00001,100.0);
+  double error =avg_error(theta,test);
+  double serror=mse(theta,test);
+  saveFile(error,serror,theta,output);
+}
+
 int main(int argc,char * argv[]){
     if(argc<3){
-        printf("Too few arguments \n");
+        printf("lsm train test output \n");
         return 1;
     }
-    //printf(" %s \n",argv[1]);
-    Samples *train=readFile(argv[1]);
-    //Samples * test=readFile(argv[2]);
-    Vector  * theta=learn(train,0.00001,100.0);
-    printVector(theta);
-   // printSamples(samples);
-    //printf(" %s \n",argv[2]);
-    //printf(" %s \n",argv[3]);
+    execute(argv[1],argv[2],argv[3]); 
     return 0;
 }
